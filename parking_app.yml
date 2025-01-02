@@ -1,0 +1,16 @@
+services:
+  parking:
+    container_name: cvt_parking
+    command: ./parking
+    environment:
+      - TZ=Asia/Almaty
+      - NVIDIA_VISIBLE_DEVICES=0
+    image: registry.infra.smartparking.kz/parqour_anpr_app:v0.0.1
+    restart: always
+    runtime: nvidia
+    volumes:
+      - ./config_files/config.json:/app/config.json
+    logging:
+      options:
+        max-size: 50m
+version: '2.1'

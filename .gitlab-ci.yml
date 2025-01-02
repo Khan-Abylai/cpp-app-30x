@@ -1,0 +1,51 @@
+stages:
+  - build
+  - deploy
+
+docker-build-api:
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  stage: build
+  when: manual
+  tags:
+    - parquor
+  variables:
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+  services:
+    - docker:19.03.0-dind
+  before_script:
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 115357906813.dkr.ecr.eu-central-1.amazonaws.com
+  script:
+    - docker build -f dockerfiles/DockerfileApp -t 115357906813.dkr.ecr.eu-central-1.amazonaws.com/container-registry:parking_api_$CI_COMMIT_SHORT_SHA .
+    - docker push 115357906813.dkr.ecr.eu-central-1.amazonaws.com/container-registry:parking_api_$CI_COMMIT_SHORT_SHA
+  only:
+    - master
+
+deploy to prod:
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  tags:
+    - parquor
+  stage: deploy
+  when: manual
+  only:
+    - master
+  before_script:
+    - apt-get update
+    - apt-get install openssh-client curl -y
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "${DEPLOY_STAGING_SERVER_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/ssh.pem
+    - chmod 600 ~/.ssh/ssh.pem
+    - ssh-keyscan -H -p 4080 ${DEPLOYMENT_STAGING_SERVER_IP} >> ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+    - sed -i "s,{api-image},115357906813.dkr.ecr.eu-central-1.amazonaws.com/container-registry:parking_api_$CI_COMMIT_SHORT_SHA,g"  parking-compose.yml
+    - scp -i ~/.ssh/ssh.pem -P 4080 -r  ./parking-compose.yml ${SSH_USERNAME}@${DEPLOYMENT_STAGING_SERVER_IP}:/home/devops/parking
+    - scp -i ~/.ssh/ssh.pem -P 4080 -r  ./config_files/config.json ${SSH_USERNAME}@${DEPLOYMENT_STAGING_SERVER_IP}:/home/devops/parking
+  script:
+    # run docker-compose
+    - ssh -i ~/.ssh/ssh.pem ${SSH_USERNAME}@${DEPLOYMENT_STAGING_SERVER_IP} -p 4080
+      "cd ~/parking;
+      aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 115357906813.dkr.ecr.eu-central-1.amazonaws.com;
+      docker-compose -f ./parking-compose.yml pull;
+      docker-compose -f ./parking-compose.yml up -d;"

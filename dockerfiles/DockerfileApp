@@ -1,0 +1,19 @@
+FROM registry.infra.smartparking.kz/parqour_anpr_base:4.0
+
+RUN mkdir -p /app
+WORKDIR /app
+
+COPY models models
+COPY src/ src/
+COPY videos/ videos/
+COPY CMakeLists.txt .
+RUN mkdir build && \
+    cd build && \
+    cmake -D CMAKE_C_COMPILER=gcc-11 -D CMAKE_CXX_COMPILER=g++-11 .. && \
+    make -Werror -Wall && \
+    mv parking ../ && \
+    cd .. && \
+    rm -rf src/ build/ CMakeLists.txt
+RUN mkdir -p ./images
+ENV CUDA_MODULE_LOADING=LAZY
+RUN echo "build prepared"

@@ -1,0 +1,16 @@
+services:
+  parking:
+    image: {api-image}
+    container_name: cvt_parking
+    command: ./parking
+    environment:
+      - TZ=Asia/Almaty
+      - NVIDIA_VISIBLE_DEVICES=0
+    restart: always
+    runtime: nvidia
+    volumes:
+      - ./config.json:/app/config.json
+    logging:
+      options:
+        max-size: 50m
+version: '2.1'

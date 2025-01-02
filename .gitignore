@@ -1,0 +1,14 @@
+.idea
+build
+.idea/
+images/
+build
+cmake-build-carcity-debug/
+cmake-build-toimart
+cmake-build-carcity-release/
+cmake-build-essentai/
+cmake-build-local-docker-debug/
+cmake-build-local-docker-release/
+cmake-build-debug
+build
+dist

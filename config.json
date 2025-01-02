@@ -1,0 +1,24 @@
+{
+  "cameras": [
+    {
+      "client_type": "simple",
+      "camera_ip": "10.66.112.21",
+      "rtsp_url": "rtsp://admin:campas123.@10.66.112.21/media/video",
+      "car_model_recognition": 0,
+      "use_direction": 0,
+      "use_send_direction": 0,
+      "use_projection": 0,
+      "use_plate_size": 0,
+      "time_between_sent_plates": 5,
+      "plates_count": 1,
+      "result_send_endpoint": "http://10.66.100.156:8888/rest/cars/event",
+      "node_ip": "http://10.66.100.156:8888/rest/camera/getCalibrationByIp/",
+      "snapshot_send_ip": "http://10.66.100.156:8888/rest/arm/picture",
+      "use_mask_2": 0
+    }
+  ],
+  "time_between_snapshot_send": 1,
+  "rec_threshold": 0.9,
+  "det_threshold": 0.8,
+  "use_gpu_decode": 0
+}

@@ -1,0 +1,24 @@
+{
+  "cameras": [
+    {
+      "client_type": "simple",
+      "camera_ip": "10.66.69.21",
+      "rtsp_url": "rtsp://readonly:qwerty12!@10.66.69.21/cam/realmonitor?channel=1&subtype=0",
+      "car_model_recognition": 0,
+      "use_direction": 0,
+      "use_send_direction": 0,
+      "use_projection": 0,
+      "use_plate_size": 0,
+      "time_between_sent_plates": 4,
+      "plates_count": 6,
+      "result_send_endpoint": "http://10.66.5.25:8888/rest/cars/event",
+      "node_ip": "https://10.66.69.3/rest/camera/getCalibrationByIp/",
+      "snapshot_send_ip": "http://10.66.5.25:8888/rest/arm/picture",
+      "use_mask_2": 0
+    }
+  ],
+  "time_between_snapshot_send": 1,
+  "rec_threshold": 0.9,
+  "det_threshold": 0.8,
+  "use_gpu_decode": 1
+}
